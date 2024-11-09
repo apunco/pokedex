@@ -57,9 +57,15 @@ func getCommands() map[string]cliCommand {
 		},
 		"inspect": {
 			name:           "inspect",
-			description:    "Inspect pokemon from your pokedex",
+			description:    "Inspect a pokemon from your pokedex",
 			callback:       inspectPokemon,
 			parameterCount: 1,
+		},
+		"pokedex": {
+			name:           "pokedex",
+			description:    "Returns all pokemons currently in the pokedex",
+			callback:       inspectPokedex,
+			parameterCount: 0,
 		},
 	}
 }
@@ -136,7 +142,6 @@ func exploreLocation(cfg *config) error {
 		return err
 	}
 
-	//print pokemons
 	fmt.Println("Exploring " + cfg.parameters[0])
 	fmt.Println("Found Pokemon:")
 	for _, val := range loc.PokemonEncounters {
@@ -199,4 +204,14 @@ func printPokemonTypes(pokemonTypes []pokeapi.Types) {
 	for _, pokemonType := range pokemonTypes {
 		fmt.Printf("  -%s\n", pokemonType.Type.Name)
 	}
+}
+
+func inspectPokedex(cfg *config) error {
+	fmt.Println("Your Pokedex:")
+
+	for key, _ := range cfg.pokedex {
+		fmt.Printf(" - %s\n", key)
+	}
+
+	return nil
 }
