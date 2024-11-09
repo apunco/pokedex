@@ -56,24 +56,22 @@ func (c *cache) remove(key string) {
 
 func (c *cache) reapLoop(interval time.Duration) {
 	ticker := time.NewTicker(interval)
+	defer ticker.Stop()
 
 	for {
-		c.mu.Lock()
-		for key := range c.cache {
-
-			if c.cache[key].createdAt.Add(interval).Before(time.Now()) {
-				c.remove(key)
-			}
-		}
-
-		c.mu.Unlock()
-
 		select {
-		case <-ticker.C:
-			continue
 		case <-c.exitC:
 			c.CleanUp(ticker)
 			return
+		case <-ticker.C:
+			c.mu.Lock()
+			for key := range c.cache {
+
+				if c.cache[key].createdAt.Add(interval).Before(time.Now()) {
+					delete(c.cache, key)
+				}
+			}
+			c.mu.Unlock()
 		}
 	}
 }
