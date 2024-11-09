@@ -253,20 +253,23 @@ type RespPokemon struct {
 			} `json:"generation-viii"`
 		} `json:"versions"`
 	} `json:"sprites"`
-	Stats []struct {
-		BaseStat int `json:"base_stat"`
-		Effort   int `json:"effort"`
-		Stat     struct {
-			Name string `json:"name"`
-			URL  string `json:"url"`
-		} `json:"stat"`
-	} `json:"stats"`
-	Types []struct {
-		Slot int `json:"slot"`
-		Type struct {
-			Name string `json:"name"`
-			URL  string `json:"url"`
-		} `json:"type"`
-	} `json:"types"`
-	Weight int `json:"weight"`
+	Stats  []StatDetail `json:"stats"`
+	Types  []Types      `json:"types"`
+	Weight int          `json:"weight"`
+}
+
+type StatDetail struct {
+	BaseStat int      `json:"base_stat"`
+	Effort   int      `json:"effort"`
+	StatType StatType `json:"stat"`
+}
+
+type StatType struct {
+	Name string `json:"name"`
+	URL  string `json:"url"`
+}
+
+type Types struct {
+	Slot int      `json:"slot"`
+	Type StatType `json:"type"`
 }

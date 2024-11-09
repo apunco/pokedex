@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"math/rand/v2"
 	"os"
+
+	pokeapi "github.com/apunco/go/pokedex/internal/pokeapi"
 )
 
 type cliCommand struct {
@@ -51,6 +53,12 @@ func getCommands() map[string]cliCommand {
 			name:           "catch",
 			description:    "Attempts to catch a pokemon and add it to a pokedex",
 			callback:       catchPokemon,
+			parameterCount: 1,
+		},
+		"inspect": {
+			name:           "inspect",
+			description:    "Inspect pokemon from your pokedex",
+			callback:       inspectPokemon,
 			parameterCount: 1,
 		},
 	}
@@ -157,6 +165,38 @@ func catchPokemon(cfg *config) error {
 	return nil
 }
 
+func inspectPokemon(cfg *config) error {
+	pokemonName := cfg.parameters[0]
+
+	if _, ok := cfg.pokedex[pokemonName]; !ok {
+		return errors.New("Pokemon " + pokemonName + " has not been caught yet!")
+	}
+
+	pokemon := cfg.pokedex[pokemonName]
+
+	fmt.Println("Name: " + pokemon.Name)
+	fmt.Printf("Height: %d\n", pokemon.Height)
+	fmt.Printf("Weight: %d\n", pokemon.Weight)
+	fmt.Println("Stats:")
+	printPokemonStats(pokemon.Stats)
+	fmt.Println("Types:")
+	printPokemonTypes(pokemon.Types)
+
+	return nil
+}
+
 func pokemonCaught(baseExperience int) bool {
 	return baseExperience < rand.IntN(700)
+}
+
+func printPokemonStats(pokemonStats []pokeapi.StatDetail) {
+	for _, stat := range pokemonStats {
+		fmt.Printf("  -%s: %d\n", stat.StatType.Name, stat.BaseStat)
+	}
+}
+
+func printPokemonTypes(pokemonTypes []pokeapi.Types) {
+	for _, pokemonType := range pokemonTypes {
+		fmt.Printf("  -%s\n", pokemonType.Type.Name)
+	}
 }
