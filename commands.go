@@ -8,32 +8,43 @@ import (
 )
 
 type cliCommand struct {
-	name        string
-	description string
-	callback    func(*config) error
+	name           string
+	description    string
+	callback       func(*config) error
+	parameterCount int
 }
 
 func getCommands() map[string]cliCommand {
 	return map[string]cliCommand{
 		"help": {
-			name:        "help",
-			description: "Displays a help message",
-			callback:    commandHelp,
+			name:           "help",
+			description:    "Displays a help message",
+			callback:       commandHelp,
+			parameterCount: 0,
 		},
 		"exit": {
-			name:        "exit",
-			description: "Exit the Pokedex",
-			callback:    commandExit,
+			name:           "exit",
+			description:    "Exit the Pokedex",
+			callback:       commandExit,
+			parameterCount: 0,
 		},
 		"map": {
-			name:        "map",
-			description: "Displays the names of the next 20 areas in the Pokemon world",
-			callback:    getNextArea,
+			name:           "map",
+			description:    "Displays the names of the next 20 areas in the Pokemon world",
+			callback:       getNextArea,
+			parameterCount: 0,
 		},
 		"mapb": {
-			name:        "map",
-			description: "Displays the names of the previous 20 areas in the Pokemon world",
-			callback:    getPreviousArea,
+			name:           "mapb",
+			description:    "Displays the names of the previous 20 areas in the Pokemon world",
+			callback:       getPreviousArea,
+			parameterCount: 0,
+		},
+		"explore": {
+			name:           "explore",
+			description:    "Displays pokemon found at the location sent as a parameter: explore {location}",
+			callback:       exploreLocation,
+			parameterCount: 1,
 		},
 	}
 }
@@ -104,7 +115,18 @@ func getPreviousArea(cfg *config) error {
 	return nil
 }
 
-func explore(cfg *config) error {
+func exploreLocation(cfg *config) error {
+	loc, err := cfg.pokeApiClient.ExploreLocation(cfg.parameters[0])
+	if err != nil {
+		return err
+	}
+
+	//print pokemons
+	fmt.Println("Exploring " + cfg.parameters[0])
+	fmt.Println("Found Pokemon:")
+	for _, val := range loc.PokemonEncounters {
+		println("- " + val.Pokemon.Name)
+	}
 
 	return nil
 }
