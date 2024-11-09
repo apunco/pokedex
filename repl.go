@@ -5,15 +5,17 @@ import (
 	"fmt"
 	"os"
 	"strings"
+
+	"github.com/apunco/go/pokedex/internal/pokeapi"
 )
 
-type cliCommand struct {
-	name        string
-	description string
-	callback    func() error
+type config struct {
+	pokeApiClient pokeapi.Client
+	prevUrl       *string
+	nextUrl       *string
 }
 
-func startRepl() {
+func startRepl(cfg *config) {
 	scanner := bufio.NewScanner(os.Stdin)
 	writer := bufio.NewWriter(os.Stdout)
 
@@ -29,7 +31,7 @@ func startRepl() {
 
 			command, exists := getCommands()[commandName]
 			if exists {
-				err := command.callback()
+				err := command.callback(cfg)
 				if err != nil {
 					fmt.Println(err)
 				}
