@@ -68,6 +68,27 @@ func (c *Client) ExploreLocation(location string) (RespLocation, error) {
 	return locationResponse, nil
 }
 
+func (c *Client) GetPokemon(pokemonName string) (RespPokemon, error) {
+	url := baseUrl + "/pokemon/" + pokemonName
+
+	//Return cached response
+	val, ok, err := checkCache[RespPokemon](c, url)
+
+	if err != nil {
+		return RespPokemon{}, err
+	}
+	if ok {
+		return val, nil
+	}
+
+	pokemonResponse, err := getClientCall[RespPokemon](c, url)
+	if err != nil {
+		return RespPokemon{}, err
+	}
+
+	return pokemonResponse, nil
+}
+
 func getClientCall[T any](c *Client, url string) (T, error) {
 	var result T
 

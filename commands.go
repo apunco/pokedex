@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"errors"
 	"fmt"
+	"math/rand/v2"
 	"os"
 )
 
@@ -44,6 +45,12 @@ func getCommands() map[string]cliCommand {
 			name:           "explore",
 			description:    "Displays pokemon found at the location sent as a parameter: explore {location}",
 			callback:       exploreLocation,
+			parameterCount: 1,
+		},
+		"catch": {
+			name:           "catch",
+			description:    "Attempts to catch a pokemon and add it to a pokedex",
+			callback:       catchPokemon,
 			parameterCount: 1,
 		},
 	}
@@ -129,4 +136,27 @@ func exploreLocation(cfg *config) error {
 	}
 
 	return nil
+}
+
+func catchPokemon(cfg *config) error {
+	pokemonName := cfg.parameters[0]
+	fmt.Println("Throwing a Pokeball at " + pokemonName)
+
+	pokemon, err := cfg.pokeApiClient.GetPokemon(pokemonName)
+	if err != nil {
+		return err
+	}
+
+	if pokemonCaught(pokemon.BaseExperience) {
+		fmt.Println(pokemonName + " was caught!")
+		cfg.pokedex[pokemonName] = pokemon
+	} else {
+		fmt.Println(pokemonName + " escaped!")
+	}
+
+	return nil
+}
+
+func pokemonCaught(baseExperience int) bool {
+	return baseExperience < rand.IntN(700)
 }

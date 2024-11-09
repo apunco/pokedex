@@ -15,6 +15,7 @@ type config struct {
 	prevUrl       *string
 	nextUrl       *string
 	parameters    []string
+	pokedex       map[string]pokeapi.RespPokemon
 }
 
 func startRepl(cfg *config) {
