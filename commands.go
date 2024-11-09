@@ -103,3 +103,8 @@ func getPreviousArea(cfg *config) error {
 
 	return nil
 }
+
+func explore(cfg *config) error {
+
+	return nil
+}

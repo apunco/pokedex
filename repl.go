@@ -6,13 +6,14 @@ import (
 	"os"
 	"strings"
 
-	"github.com/apunco/go/pokedex/internal/pokeapi"
+	pokeapi "github.com/apunco/go/pokedex/internal/pokeapi"
 )
 
 type config struct {
 	pokeApiClient pokeapi.Client
 	prevUrl       *string
 	nextUrl       *string
+	location      string
 }
 
 func startRepl(cfg *config) {
@@ -28,6 +29,16 @@ func startRepl(cfg *config) {
 			input := cleanInput(scanner.Text())
 
 			commandName := input[0]
+
+			switch commandName {
+			case "explore":
+				if len(input) > 0 {
+					cfg.location = input[1]
+				} else {
+					fmt.Println("missing location parameter")
+					continue
+				}
+			}
 
 			command, exists := getCommands()[commandName]
 			if exists {
